@@ -75,6 +75,8 @@ class DatasetLoader(object):
       print("\t[-] Loaded image " + str(index))
       self._images = np.append(self._images, loaded_image.image)
       self._labels = np.append(self._labels, loaded_image.label)
+      if index > 10:
+        break
 
   @property
   def images(self):

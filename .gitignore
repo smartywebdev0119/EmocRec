@@ -3,6 +3,7 @@
 helen-datasets/
 RafDDownload-70101E8ED8296C00B8A47F0145DCC40A/
 dataset/
+*.pyc
 
 man/
 

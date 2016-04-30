@@ -3,37 +3,34 @@ from os.path import isfile, join
 import numpy as np
 import cv2
 from cv2.cv import *
-
-DATASET_PATH = './dataset/'
-CASC_PATH = './haarcascade_files/haarcascade_frontalface_default.xml'
-FACE_CASCADE = cv2.CascadeClassifier(CASC_PATH)
+from constants import *
 
 class ImageFile:
   def __init__(self, image_path):
     self.image_path = image_path
     label = self.classify_label(image_path)
-    image = np.asarray(bytearray(open(join(DATASET_PATH, image_path)).read()), dtype='uint8')
+    image = np.asarray(bytearray(open(join(DATASET_PATH, image_path)).read()), dtype = 'uint8')
     image = cv2.imdecode(image, cv2.CV_LOAD_IMAGE_GRAYSCALE)
-    faces = FACE_CASCADE.detectMultiScale(
+    faces = cv2.CascadeClassifier(CASC_PATH).detectMultiScale(
         image,
         scaleFactor = 1.1,
         minNeighbors = 5,
         minSize = (50, 50),
         flags = cv2.cv.CV_HAAR_SCALE_IMAGE
     )
-    # Only if we found an image
-    if not len(faces) > 0:
+    # None is we don't found an image
+    if not len(faces) > 0 or self.classify_label is None:
       self._image = None
       self._label = None
       return
-    # Chop image
+    # Chop image to face
     face = faces[0]
     image = image[face[0]:(face[0] + face[2]), face[1]:(face[1] + face[3])]
-    # Resize image
-    # try:
-    #  resized_image = cv2.resize(image, (SIZE_FACE, SIZE_FACE))
-    #except Exception:
-    #  return None
+    # Resize image to network size
+    try:
+      image = cv2.resize(image, (SIZE_FACE, SIZE_FACE))
+    except Exception:
+      return None
     self._image = image
     self._label = label
     #cv2.imshow("Imagen", image)
@@ -41,11 +38,13 @@ class ImageFile:
     #cv2.destroyAllWindows()
 
   def classify_label(self, image_path):
-    emotions = ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise', 'contempt', 'neutral']
-    for index, emotion in enumerate(emotions):
+    for index, emotion in enumerate(EMOTIONS):
       if emotion in image_path:
-        return index
-    return None
+        tmp = np.zeros(len(EMOTIONS))
+        tmp[index] = 1.0
+        return tmp
+    # This should not happen
+    raise Exception('There is an extrange emotion in file ' + image_path)
 
   @property
   def image(self):
@@ -62,6 +61,8 @@ class DatasetLoader(object):
     self._images = np.array([])
     self._labels = np.array([])
     self.load_dataset()
+    self._images = self._images.reshape([-1, SIZE_FACE, SIZE_FACE, 1])
+    self._labels = self._labels.reshape([-1, len(EMOTIONS)])
     self._epochs_completed = 0
     self._index_in_epoch = 0
 

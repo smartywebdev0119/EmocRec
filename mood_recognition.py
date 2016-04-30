@@ -7,10 +7,9 @@ from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.normalization import local_response_normalization
 from tflearn.layers.estimator import regression
+from constants import *
 
 class MoodRecognition:
-  SIZE_FACE = 56
-  SAVE_DEFAULT_PATH = 'model.tfl'
 
   def __init__(self):
     self.build_network()
@@ -20,23 +19,23 @@ class MoodRecognition:
     # Building 'AlexNet'
     # https://github.com/tflearn/tflearn/blob/master/examples/images/alexnet.py
     print('[+] Building CNN')
-    network = input_data(shape = [None, 224, 224, 3])
-    network = conv_2d(network, 96, 11, strides =4, activation = 'relu')
-    network = max_pool_2d(network, 3, strides =2)
+    network = input_data(shape = [None, 224, 224, 1])
+    network = conv_2d(network, 96, 11, strides = 4, activation = 'relu')
+    network = max_pool_2d(network, 3, strides = 2)
     network = local_response_normalization(network)
     network = conv_2d(network, 256, 5, activation = 'relu')
-    network = max_pool_2d(network, 3, strides =2)
+    network = max_pool_2d(network, 3, strides = 2)
     network = local_response_normalization(network)
     network = conv_2d(network, 384, 3, activation = 'relu')
     network = conv_2d(network, 384, 3, activation = 'relu')
     network = conv_2d(network, 256, 3, activation = 'relu')
-    network = max_pool_2d(network, 3, strides =2)
+    network = max_pool_2d(network, 3, strides = 2)
     network = local_response_normalization(network)
     network = fully_connected(network, 4096, activation = 'tanh')
     network = dropout(network, 0.5)
     network = fully_connected(network, 4096, activation = 'tanh')
     network = dropout(network, 0.5)
-    network = fully_connected(network, 17, activation = 'softmax')
+    network = fully_connected(network, len(EMOTIONS), activation = 'softmax')
     network = regression(network,
       optimizer = 'momentum',
       loss = 'categorical_crossentropy',

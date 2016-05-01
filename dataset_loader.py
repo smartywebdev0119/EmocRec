@@ -23,9 +23,13 @@ class ImageFile:
       self._image = None
       self._label = None
       return
+    max_area_face = faces[0]
+    for face in faces:
+      if face[2] * face[3] > max_area_face[2] * max_area_face[3]:
+        max_area_face = face
     # Chop image to face
-    face = faces[0]
-    image = image[face[0]:(face[0] + face[2]), face[1]:(face[1] + face[3])]
+    face = max_area_face
+    image = image[face[1]:(face[1] + face[2]), face[0]:(face[0] + face[3])]
     # Resize image to network size
     try:
       image = cv2.resize(image, (SIZE_FACE, SIZE_FACE))
@@ -68,7 +72,7 @@ class DatasetLoader(object):
 
   def load_dataset(self):
     print('[+] Loading dataset')
-    list_files = [f for f in listdir(DATASET_PATH) if isfile(join(DATASET_PATH, f)) and f.endswith('.jpg')]
+    list_files = [f for f in listdir(DATASET_PATH) if isfile(join(DATASET_PATH, f)) and f.endswith('.jpg') and f.startswith('Rafd090')]
     for index, image_file_path in enumerate(list_files):
       loaded_image = ImageFile(image_file_path)
       if loaded_image.image is None:

@@ -66,11 +66,12 @@ class MoodRecognition:
 
   def save_model(self):
     self.model.save(SAVE_DEFAULT_PATH)
-    print('[+] Model saved at ' + SAVE_DEFAULT_PATH)
+    print('[+] Model trained and saved at ' + SAVE_DEFAULT_PATH)
 
 if __name__ == "__main__":
   network = MoodRecognition()
   network.start_training()
+  network.save_model()
 
 
 # print("[+] Loading images:")

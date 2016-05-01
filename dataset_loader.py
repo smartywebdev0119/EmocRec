@@ -11,6 +11,18 @@ class ImageFile:
     label = self.classify_label(image_path)
     image = np.asarray(bytearray(open(join(DATASET_PATH, image_path)).read()), dtype = 'uint8')
     image = cv2.imdecode(image, cv2.CV_LOAD_IMAGE_GRAYSCALE)
+    image = ImageFile.format_image(image)
+    if image is None or label is None:
+      self._image = None
+      self._label = None
+      return
+    self._image = image
+    self._label = label
+    #cv2.imshow("Imagen", image)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
+  @classmethod
+  def format_image(self, image):
     faces = cv2.CascadeClassifier(CASC_PATH).detectMultiScale(
         image,
         scaleFactor = 1.1,
@@ -19,10 +31,8 @@ class ImageFile:
         flags = cv2.cv.CV_HAAR_SCALE_IMAGE
     )
     # None is we don't found an image
-    if not len(faces) > 0 or self.classify_label is None:
-      self._image = None
-      self._label = None
-      return
+    if not len(faces) > 0:
+      return None
     max_area_face = faces[0]
     for face in faces:
       if face[2] * face[3] > max_area_face[2] * max_area_face[3]:
@@ -35,11 +45,7 @@ class ImageFile:
       image = cv2.resize(image, (SIZE_FACE, SIZE_FACE))
     except Exception:
       return None
-    self._image = image
-    self._label = label
-    #cv2.imshow("Imagen", image)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    return image
 
   def classify_label(self, image_path):
     for index, emotion in enumerate(EMOTIONS):

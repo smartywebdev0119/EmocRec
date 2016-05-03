@@ -10,7 +10,6 @@ class ImageFile:
     self.image_path = image_path
     label = self.classify_label(image_path)
     image = np.asarray(bytearray(open(join(DATASET_PATH, image_path)).read()), dtype = 'uint8')
-    image = cv2.imdecode(image, cv2.CV_LOAD_IMAGE_GRAYSCALE)
     image = ImageFile.format_image(image)
     if image is None or label is None:
       self._image = None
@@ -23,16 +22,21 @@ class ImageFile:
     #cv2.destroyAllWindows()
   @classmethod
   def format_image(self, image):
+    if len(image.shape) > 2 and image.shape[2] == 3:
+      image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    else:
+      image = cv2.imdecode(image, cv2.CV_LOAD_IMAGE_GRAYSCALE)
     faces = cv2.CascadeClassifier(CASC_PATH).detectMultiScale(
         image,
         scaleFactor = 1.1,
         minNeighbors = 5,
-        minSize = (50, 50),
+        minSize = (20, 20),
         flags = cv2.cv.CV_HAAR_SCALE_IMAGE
     )
     # None is we don't found an image
     if not len(faces) > 0:
       return None
+    print("N faces: " + str(len(faces)))
     max_area_face = faces[0]
     for face in faces:
       if face[2] * face[3] > max_area_face[2] * max_area_face[3]:
@@ -44,6 +48,7 @@ class ImageFile:
     try:
       image = cv2.resize(image, (SIZE_FACE, SIZE_FACE))
     except Exception:
+      print("[+] Problem during resize")
       return None
     return image
 
@@ -86,7 +91,7 @@ class DatasetLoader(object):
       print("\t[-] Loaded image " + str(index))
       self._images = np.append(self._images, loaded_image.image)
       self._labels = np.append(self._labels, loaded_image.label)
-      if index > 10:
+      if index > 5:
         break
 
   @property

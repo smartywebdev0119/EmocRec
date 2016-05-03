@@ -1,7 +1,7 @@
 from __future__ import division, print_function, absolute_import
 import re
 import numpy as np
-from dataset_loader import DatasetLoader
+from dataset_loader import DatasetLoader, ImageFile
 import tflearn
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.conv import conv_2d, max_pool_2d
@@ -13,45 +13,44 @@ class MoodRecognition:
 
   def __init__(self):
     self.build_network()
-    self.dataset = DatasetLoader()
 
   def build_network(self):
     # Building 'AlexNet'
     # https://github.com/tflearn/tflearn/blob/master/examples/images/alexnet.py
     print('[+] Building CNN')
-    network = input_data(shape = [None, 224, 224, 1])
-    network = conv_2d(network, 96, 11, strides = 4, activation = 'relu')
-    network = max_pool_2d(network, 3, strides = 2)
-    network = local_response_normalization(network)
-    network = conv_2d(network, 256, 5, activation = 'relu')
-    network = max_pool_2d(network, 3, strides = 2)
-    network = local_response_normalization(network)
-    network = conv_2d(network, 384, 3, activation = 'relu')
-    network = conv_2d(network, 384, 3, activation = 'relu')
-    network = conv_2d(network, 256, 3, activation = 'relu')
-    network = max_pool_2d(network, 3, strides = 2)
-    network = local_response_normalization(network)
-    network = fully_connected(network, 4096, activation = 'tanh')
-    network = dropout(network, 0.5)
-    network = fully_connected(network, 4096, activation = 'tanh')
-    network = dropout(network, 0.5)
-    network = fully_connected(network, len(EMOTIONS), activation = 'softmax')
-    network = regression(network,
+    self.network = input_data(shape = [None, 224, 224, 1])
+    self.network = conv_2d(self.network, 96, 11, strides = 4, activation = 'relu')
+    self.network = max_pool_2d(self.network, 3, strides = 2)
+    self.network = local_response_normalization(self.network)
+    self.network = conv_2d(self.network, 256, 5, activation = 'relu')
+    self.network = max_pool_2d(self.network, 3, strides = 2)
+    self.network = local_response_normalization(self.network)
+    self.network = conv_2d(self.network, 384, 3, activation = 'relu')
+    self.network = conv_2d(self.network, 384, 3, activation = 'relu')
+    self.network = conv_2d(self.network, 256, 3, activation = 'relu')
+    self.network = max_pool_2d(self.network, 3, strides = 2)
+    self.network = local_response_normalization(self.network)
+    self.network = fully_connected(self.network, 4096, activation = 'tanh')
+    self.network = dropout(self.network, 0.5)
+    self.network = fully_connected(self.network, 4096, activation = 'tanh')
+    self.network = dropout(self.network, 0.5)
+    self.network = fully_connected(self.network, len(EMOTIONS), activation = 'softmax')
+    self.network = regression(self.network,
       optimizer = 'momentum',
       loss = 'categorical_crossentropy',
       learning_rate = 0.001)
-    self.network = network
-
-
-  def start_training(self):
-    # Training
-    print('[+] Training network')
     self.model = tflearn.DNN(
       self.network,
       checkpoint_path = 'model_alexnet',
       max_checkpoints = 1,
       tensorboard_verbose = 2
     )
+
+
+  def start_training(self):
+    self.dataset = DatasetLoader()
+    # Training
+    print('[+] Training network')
     self.model.fit(
       self.dataset.images, self.dataset.labels,
       n_epoch = 1000,
@@ -64,9 +63,20 @@ class MoodRecognition:
       run_id = 'alexnet_mood_recognition'
     )
 
+  def predict(self, image):
+    image = ImageFile.format_image(image)
+    if image is None:
+      return None
+    image = image.reshape([-1, SIZE_FACE, SIZE_FACE, 1])
+    return self.model.predict(image)
+
   def save_model(self):
     self.model.save(SAVE_DEFAULT_PATH)
     print('[+] Model trained and saved at ' + SAVE_DEFAULT_PATH)
+
+  def load_model(self):
+    self.model.load(SAVE_DEFAULT_PATH)
+    print('[+] Model loaded from ' + SAVE_DEFAULT_PATH)
 
 if __name__ == "__main__":
   network = MoodRecognition()

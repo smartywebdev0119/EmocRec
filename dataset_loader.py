@@ -36,7 +36,6 @@ class ImageFile:
     # None is we don't found an image
     if not len(faces) > 0:
       return None
-    print("N faces: " + str(len(faces)))
     max_area_face = faces[0]
     for face in faces:
       if face[2] * face[3] > max_area_face[2] * max_area_face[3]:
@@ -50,6 +49,8 @@ class ImageFile:
     except Exception:
       print("[+] Problem during resize")
       return None
+    # cv2.imshow("Lol", image)
+    # cv2.waitKey(0)
     return image
 
   def classify_label(self, image_path):
@@ -78,12 +79,14 @@ class DatasetLoader(object):
     self.load_dataset()
     self._images = self._images.reshape([-1, SIZE_FACE, SIZE_FACE, 1])
     self._labels = self._labels.reshape([-1, len(EMOTIONS)])
+    print self._labels
     self._epochs_completed = 0
     self._index_in_epoch = 0
 
   def load_dataset(self):
     print('[+] Loading dataset')
-    list_files = [f for f in listdir(DATASET_PATH) if isfile(join(DATASET_PATH, f)) and f.endswith('.jpg') and f.startswith('Rafd090')]
+    list_files = [f for f in listdir(DATASET_PATH) if isfile(join(DATASET_PATH, f)) and f.endswith('.jpg') and ( f.startswith('Rafd090') )]# or f.startswith('Rafd045') or f.startswith('Rafd135'))]
+    print('[-] ' + str(len(list_files)) + ' Imagenes para cargar')
     for index, image_file_path in enumerate(list_files):
       loaded_image = ImageFile(image_file_path)
       if loaded_image.image is None:
@@ -91,8 +94,8 @@ class DatasetLoader(object):
       print("\t[-] Loaded image " + str(index))
       self._images = np.append(self._images, loaded_image.image)
       self._labels = np.append(self._labels, loaded_image.label)
-      if index > 5:
-        break
+      #if index > 5:
+      #  break
 
   @property
   def images(self):

@@ -8,8 +8,9 @@
 #
 #
 
+CACHE_DATASET_PATH = './dataset/cache/'
 DATASET_PATH = './dataset/'
 CASC_PATH = './haarcascade_files/haarcascade_frontalface_default.xml'
-SIZE_FACE = 224
+SIZE_FACE = 48
 EMOTIONS = ['angry', 'disgusted', 'fearful', 'happy', 'sad', 'surprised', 'contemptuous', 'neutral']
 SAVE_DEFAULT_PATH = 'model.tfl'

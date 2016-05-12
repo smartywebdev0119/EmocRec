@@ -18,30 +18,23 @@ class MoodRecognition:
     # Building 'AlexNet'
     # https://github.com/tflearn/tflearn/blob/master/examples/images/alexnet.py
     print('[+] Building CNN')
-    self.network = input_data(shape = [None, 224, 224, 1])
-    self.network = conv_2d(self.network, 96, 11, strides = 4, activation = 'relu')
-    self.network = max_pool_2d(self.network, 3, strides = 2)
-    self.network = local_response_normalization(self.network)
-    self.network = conv_2d(self.network, 256, 5, activation = 'relu')
-    self.network = max_pool_2d(self.network, 3, strides = 2)
-    self.network = local_response_normalization(self.network)
-    self.network = conv_2d(self.network, 384, 3, activation = 'relu')
-    self.network = conv_2d(self.network, 384, 3, activation = 'relu')
-    self.network = conv_2d(self.network, 256, 3, activation = 'relu')
-    self.network = max_pool_2d(self.network, 3, strides = 2)
-    self.network = local_response_normalization(self.network)
-    self.network = fully_connected(self.network, 4096, activation = 'tanh')
-    self.network = dropout(self.network, 0.5)
-    self.network = fully_connected(self.network, 4096, activation = 'tanh')
+    self.network = input_data(shape = [None, SIZE_FACE, SIZE_FACE, 1])
+    self.network = conv_2d(self.network, 32, 4, activation = 'relu')
+    self.network = max_pool_2d(self.network, 2)
+    self.network = conv_2d(self.network, 64, 3, activation = 'relu')
+    self.network = conv_2d(self.network, 64, 3, activation = 'relu')
+    self.network = max_pool_2d(self.network, 2)
+    self.network = fully_connected(self.network, 512, activation = 'relu')
     self.network = dropout(self.network, 0.5)
     self.network = fully_connected(self.network, len(EMOTIONS), activation = 'softmax')
+    mom = tflearn.Momentum(0.1, lr_decay = 0.1, decay_step = 16000, staircase = True)
     self.network = regression(self.network,
-      optimizer = 'momentum',
+      optimizer = mom,
       loss = 'categorical_crossentropy',
       learning_rate = 0.001)
     self.model = tflearn.DNN(
       self.network,
-      checkpoint_path = 'model_alexnet',
+      checkpoint_path = 'saves/alexnet_mood_recognition',
       max_checkpoints = 1,
       tensorboard_verbose = 2
     )
@@ -53,13 +46,13 @@ class MoodRecognition:
     print('[+] Training network')
     self.model.fit(
       self.dataset.images, self.dataset.labels,
-      n_epoch = 1000,
       validation_set = 0.1,
+      n_epoch = 20,
+      batch_size = 128,
       shuffle = True,
       show_metric = True,
-      batch_size = 64,
       snapshot_step = 200,
-      snapshot_epoch = False,
+      snapshot_epoch = True,
       run_id = 'alexnet_mood_recognition'
     )
 

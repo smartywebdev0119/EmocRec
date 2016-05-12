@@ -6,6 +6,8 @@ dataset/
 *.pyc
 model_alexnet-1200
 *.meta
+*.tfl
+saves/
 
 man/
 

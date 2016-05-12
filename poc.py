@@ -8,7 +8,7 @@ import numpy as np
 
 # Load Model
 network = MoodRecognition()
-#network.load_model()
+network.load_model()
 
 video_capture = cv2.VideoCapture(0)
 

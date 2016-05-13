@@ -8,9 +8,16 @@ import numpy as np
 
 # Load Model
 network = MoodRecognition()
-network.load_model()
+network.build_network()
+try:
+    network.load_model()
+except Exception as err:
+    print('[!] Saved model not found, exit(): ')
+    print(err)
+    exit()
 
 video_capture = cv2.VideoCapture(0)
+font = cv2.FONT_HERSHEY_SIMPLEX
 
 while True:
     # Capture frame-by-frame
@@ -24,9 +31,8 @@ while True:
     # Write results in frame
     if result is not None:
       for index, emotion in enumerate(EMOTIONS):
-        str_tmp = emotion + ' ' + str(result[0][index])
-        cv2.putText(frame, str_tmp, (10, index * 15 + 30), cv2.FONT_HERSHEY_PLAIN, 1,(0,255,0),2);
-
+        cv2.putText(frame, emotion, (10, index * 20 + 20), cv2.FONT_HERSHEY_PLAIN, 0.5, (0,255,0), 1);
+        cv2.rectangle(frame, (130, index * 20 + 10), (130 + int(result[0][index] * 100), (index + 1) * 20 + 4), (255, 0, 0), -1)
 
     # Display the resulting frame
     cv2.imshow('Video', frame)

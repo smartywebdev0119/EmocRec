@@ -8,11 +8,13 @@ from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.normalization import local_response_normalization
 from tflearn.layers.estimator import regression
 from constants import *
+from os.path import isfile, join
+import sys
 
 class MoodRecognition:
 
   def __init__(self):
-    self.build_network()
+    self.dataset = DatasetLoader()
 
   def build_network(self):
     # Building 'AlexNet'
@@ -34,21 +36,37 @@ class MoodRecognition:
       learning_rate = 0.001)
     self.model = tflearn.DNN(
       self.network,
-      checkpoint_path = 'saves/alexnet_mood_recognition',
+      checkpoint_path = SAVE_DIRECTORY + '/alexnet_mood_recognition',
       max_checkpoints = 1,
       tensorboard_verbose = 2
     )
 
+  def build_and_save_dataset(self):
+    self.dataset.build()
+    self.dataset.save()
+
+  def load_saved_dataset(self):
+    try:
+      # IF file exists
+      self.dataset.load_from_save()
+      print('[+] Dataset found and loaded')
+    except Exception as err:
+      # If not, we build them
+      print('[+] Dataset was not found, building')
+      self.build_and_save_dataset()
 
   def start_training(self):
-    self.dataset = DatasetLoader()
+    self.load_saved_dataset()
+    self.build_network()
+    if self.dataset is None:
+      self.load_saved_dataset()
     # Training
     print('[+] Training network')
     self.model.fit(
       self.dataset.images, self.dataset.labels,
       validation_set = 0.1,
-      n_epoch = 20,
-      batch_size = 128,
+      n_epoch = 10,
+      batch_size = 100,
       shuffle = True,
       show_metric = True,
       snapshot_step = 200,
@@ -64,40 +82,32 @@ class MoodRecognition:
     return self.model.predict(image)
 
   def save_model(self):
-    self.model.save(SAVE_DEFAULT_PATH)
-    print('[+] Model trained and saved at ' + SAVE_DEFAULT_PATH)
+    self.model.save(join(SAVE_DIRECTORY, SAVE_MODEL_FILENAME))
+    print('[+] Model trained and saved at ' + SAVE_MODEL_FILENAME)
 
   def load_model(self):
-    self.model.load(SAVE_DEFAULT_PATH)
-    print('[+] Model loaded from ' + SAVE_DEFAULT_PATH)
+    self.model.load(join(SAVE_DIRECTORY, SAVE_MODEL_FILENAME))
+    print('[+] Model loaded from ' + SAVE_MODEL_FILENAME)
+
+
+def show_usage():
+  print('[!] Usage: python mood_recognition.py')
+  print('\t mood_recognition.py build-dataset \t Build and saved dataset with labels')
+  print('\t mood_recognition.py train-model \t Trains and saves model with saved dataset')
+  print('\t mood_recognition.py poc \t Launch the proof of concept')
 
 if __name__ == "__main__":
+  if len(sys.argv) <= 1:
+    show_usage()
+    exit()
+
   network = MoodRecognition()
-  network.start_training()
-  network.save_model()
-
-
-# print("[+] Loading images:")
-# X = np.array([])
-# Y = np.array([])
-# testX = np.array([])
-# testY = np.array([])
-# text_files = [f for f in listdir(ANNOTATIONS_PATH) if isfile(join(ANNOTATIONS_PATH, f))]
-# for index, text_file in enumerate(text_files):
-#   loaded_image = load_image(text_file)
-#   if loaded_image is None:
-#     continue
-#   print("\t[-] Loaded image " + str(index))
-#   if index < 300:
-#     X = np.append(X, loaded_image[0])
-#     Y = np.append(Y, loaded_image[1])
-#   elif index < 330:
-#     testX = np.append(testX, loaded_image[0])
-#     testY = np.append(testY, loaded_image[1])
-#   else:
-#     break
-
-# X = X.reshape([-1, SIZE_FACE, SIZE_FACE, 1])
-# testX = testX.reshape([-1, SIZE_FACE, SIZE_FACE, 1])
-# Y = Y.reshape([-1, 388])
-# testY = testY.reshape([-1, 388])
+  if sys.argv[1] == 'build-dataset':
+    network.build_and_save_dataset()
+  elif sys.argv[1] == 'train-model':
+    network.start_training()
+    network.save_model()
+  elif sys.argv[1] == 'poc':
+    import poc
+  else:
+    show_usage()

@@ -62,7 +62,7 @@ for good_files in directories:#[0:100]:
 
           alpha = np.random.uniform(0.5,1.5)
           beta = np.random.uniform(0,100)
-          cv2.multiply(dist_contrast,alpha, dist_contrast, scale=1) 
+          cv2.multiply(dist_contrast, alpha, dist_contrast, scale=1) 
           dist_brightness  = cv2.add(dist_brightness,beta)
           
           flat = res.flatten()/255.

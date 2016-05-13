@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 from cv2.cv import *
 from constants import *
+import random
 
 class ImageFile:
   def __init__(self, image_path):
@@ -45,7 +46,7 @@ class ImageFile:
     image = image[face[1]:(face[1] + face[2]), face[0]:(face[0] + face[3])]
     # Resize image to network size
     try:
-      image = cv2.resize(image, (SIZE_FACE, SIZE_FACE))
+      image = cv2.resize(image, (SIZE_FACE, SIZE_FACE)) / 255.
     except Exception:
       print("[+] Problem during resize")
       return None
@@ -76,14 +77,23 @@ class DatasetLoader(object):
   def __init__(self):
     self._images = np.array([])
     self._labels = np.array([])
-    self.load_dataset()
-    self._images = self._images.reshape([-1, SIZE_FACE, SIZE_FACE, 1])
-    self._labels = self._labels.reshape([-1, len(EMOTIONS)])
-    print self._labels
     self._epochs_completed = 0
     self._index_in_epoch = 0
 
-  def load_dataset(self):
+  def modify_image(self, image):
+    image_copy = image.copy()
+    alpha = np.random.uniform(0.5, 1.5)
+    #beta = np.random.uniform(0, 100)
+    cv2.multiply(image_copy, alpha, image_copy, scale = 1) 
+    #image_copy  = cv2.add(image_copy, beta)
+    if random.choice([True, False]):
+      image_copy = cv2.flip(image_copy, 1)
+    cv2.imshow('Video', image_copy)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        return
+    return image_copy
+
+  def build(self):
     print('[+] Loading dataset')
     list_files = [f for f in listdir(DATASET_PATH) if isfile(join(DATASET_PATH, f)) and f.endswith('.jpg') and ( f.startswith('Rafd090') )]# or f.startswith('Rafd045') or f.startswith('Rafd135'))]
     print('[-] ' + str(len(list_files)) + ' Imagenes para cargar')
@@ -92,10 +102,26 @@ class DatasetLoader(object):
       if loaded_image.image is None:
         continue
       print("\t[-] Loaded image " + str(index))
-      self._images = np.append(self._images, loaded_image.image)
-      self._labels = np.append(self._labels, loaded_image.label)
-      #if index > 5:
+      for x in xrange(4):
+        self._images = np.append(self._images, self.modify_image(loaded_image.image))
+        self._labels = np.append(self._labels, loaded_image.label)
+      # if index > 5:
       #  break
+    self._images = self._images.reshape([-1, SIZE_FACE, SIZE_FACE, 1])
+    self._labels = self._labels.reshape([-1, len(EMOTIONS)])
+
+  def load_from_save(self):
+    if not isfile(join(SAVE_DIRECTORY, SAVE_DATASET_IMAGES_FILENAME)) or not isfile(join(SAVE_DIRECTORY, SAVE_DATASET_LABELS_FILENAME)):
+      raise Exception('File does not exist to load')
+    self._images = np.load(join(SAVE_DIRECTORY, SAVE_DATASET_IMAGES_FILENAME))
+    self._labels = np.load(join(SAVE_DIRECTORY, SAVE_DATASET_LABELS_FILENAME))
+    self._images = self._images.reshape([-1, SIZE_FACE, SIZE_FACE, 1])
+    self._labels = self._labels.reshape([-1, len(EMOTIONS)])
+
+  def save(self):
+    print('[+] Dataset saved')
+    np.save(join(SAVE_DIRECTORY, SAVE_DATASET_IMAGES_FILENAME), self._images)
+    np.save(join(SAVE_DIRECTORY, SAVE_DATASET_LABELS_FILENAME), self._labels)
 
   @property
   def images(self):

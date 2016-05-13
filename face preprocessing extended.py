@@ -16,6 +16,17 @@ images = np.array([])
 images = images.reshape([-1,50*50])
 labels = np.array([])
 labels = labels.reshape([-1,8])
+
+data_set = np.array([])
+data_set = data_set.reshape([-1,50*50])
+data_labels = np.array([])
+data_labels = data_labels.reshape([-1,8])
+
+test_set = np.array([])
+test_set = test_set.reshape([-1,50*50])
+test_labels = np.array([])
+test_labels = test_labels.reshape([-1,8])
+
 image_labels = np.array([])
 image_labels = image_labels.reshape([-1,8])
 directories = np.array([])
@@ -64,47 +75,85 @@ for good_files in directories:#[0:100]:
           beta = np.random.uniform(0,100)
           cv2.multiply(dist_contrast, alpha, dist_contrast, scale=1) 
           dist_brightness  = cv2.add(dist_brightness,beta)
+
           
-          flat = res.flatten()/255.
-          images = np.vstack([images, flat])
-          flat = dist_contrast.flatten()/255.
-          images = np.vstack([images, flat])
-          flat = dist_brightness.flatten()/255.
-          images = np.vstack([images, flat])
-          #cv2.imshow('Face',res)
-
-          if good_files.find("angry") >=0:
-               #labels = np.vstack([labels, [1, 0, 0, 0, 0, 0, 0, 0]])
-               image_labels = [1, 0, 0, 0, 0, 0, 0, 0]
-          if good_files.find("contemptuous") >=0:
-               image_labels = [0, 1, 0, 0, 0, 0, 0, 0]
-          if good_files.find("disgusted") >=0:
-               image_labels = [0, 0, 1, 0, 0, 0, 0, 0]
-          if good_files.find("fearful") >=0:
-               image_labels = [0, 0, 0, 1, 0, 0, 0, 0]
-          if good_files.find("happy") >=0:
-               image_labels = [0, 0, 0, 0, 1, 0, 0, 0]
-          if good_files.find("neutral") >=0:
-               image_labels = [0, 0, 0, 0, 0, 1, 0, 0]
-          if good_files.find("sad") >=0:
-               image_labels = [0, 0, 0, 0, 0, 0, 1, 0]
-          if good_files.find("surprised") >=0:
-               image_labels = [0, 0, 0, 0, 0, 0, 0, 1]
-
-          #print image_labels
+          if good_files.find("Rafd090_01") >=0:
                
-          labels = np.vstack([labels,image_labels])
-          labels = np.vstack([labels,image_labels])
-          labels = np.vstack([labels,image_labels])
+               flat = res.flatten()/255.
+               test_set = np.vstack([test_set, flat])
+               flat = dist_contrast.flatten()/255.
+               test_set = np.vstack([test_set, flat])
+               flat = dist_brightness.flatten()/255.
+               test_set = np.vstack([test_set, flat])
+               #cv2.imshow('Face',res)
+
+               if good_files.find("angry") >=0:
+                    #labels = np.vstack([labels, [1, 0, 0, 0, 0, 0, 0, 0]])
+                    image_labels = [1, 0, 0, 0, 0, 0, 0, 0]
+               if good_files.find("contemptuous") >=0:
+                    image_labels = [0, 1, 0, 0, 0, 0, 0, 0]
+               if good_files.find("disgusted") >=0:
+                    image_labels = [0, 0, 1, 0, 0, 0, 0, 0]
+               if good_files.find("fearful") >=0:
+                    image_labels = [0, 0, 0, 1, 0, 0, 0, 0]
+               if good_files.find("happy") >=0:
+                    image_labels = [0, 0, 0, 0, 1, 0, 0, 0]
+               if good_files.find("neutral") >=0:
+                    image_labels = [0, 0, 0, 0, 0, 1, 0, 0]
+               if good_files.find("sad") >=0:
+                    image_labels = [0, 0, 0, 0, 0, 0, 1, 0]
+               if good_files.find("surprised") >=0:
+                    image_labels = [0, 0, 0, 0, 0, 0, 0, 1]
+
+               #print image_labels
+                    
+               test_labels = np.vstack([test_labels,image_labels])
+               test_labels = np.vstack([test_labels,image_labels])
+               test_labels = np.vstack([test_labels,image_labels])
+
+          else:
+               
+
+               flat = res.flatten()/255.
+               data_set = np.vstack([data_set, flat])
+               flat = dist_contrast.flatten()/255.
+               data_set = np.vstack([data_set, flat])
+               flat = dist_brightness.flatten()/255.
+               data_set = np.vstack([data_set, flat])
+               #cv2.imshow('Face',res)
+
+               if good_files.find("angry") >=0:
+                    #labels = np.vstack([labels, [1, 0, 0, 0, 0, 0, 0, 0]])
+                    image_labels = [1, 0, 0, 0, 0, 0, 0, 0]
+               if good_files.find("contemptuous") >=0:
+                    image_labels = [0, 1, 0, 0, 0, 0, 0, 0]
+               if good_files.find("disgusted") >=0:
+                    image_labels = [0, 0, 1, 0, 0, 0, 0, 0]
+               if good_files.find("fearful") >=0:
+                    image_labels = [0, 0, 0, 1, 0, 0, 0, 0]
+               if good_files.find("happy") >=0:
+                    image_labels = [0, 0, 0, 0, 1, 0, 0, 0]
+               if good_files.find("neutral") >=0:
+                    image_labels = [0, 0, 0, 0, 0, 1, 0, 0]
+               if good_files.find("sad") >=0:
+                    image_labels = [0, 0, 0, 0, 0, 0, 1, 0]
+               if good_files.find("surprised") >=0:
+                    image_labels = [0, 0, 0, 0, 0, 0, 0, 1]
+
+               #print image_labels
+                    
+               data_labels = np.vstack([data_labels,image_labels])
+               data_labels = np.vstack([data_labels,image_labels])
+               data_labels = np.vstack([data_labels,image_labels])
      
           if cv2.waitKey(1) & 0xFF == ord('q'):
            break
 
-data_set = images[test_batch_size:,:]
-test_set = images[0:test_batch_size,:]
+#data_set = images[test_batch_size:,:]
+#test_set = images[0:test_batch_size,:]
 
-data_labels = labels[test_batch_size:,:]
-test_labels = labels[0:test_batch_size,:]
+#data_labels = labels[test_batch_size:,:]
+#test_labels = labels[0:test_batch_size,:]
 
 np.save("data_set_extended.npy", data_set)
 np.save("test_set_extended.npy", test_set)

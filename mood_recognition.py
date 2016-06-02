@@ -21,17 +21,25 @@ class MoodRecognition:
     # https://github.com/tflearn/tflearn/blob/master/examples/images/alexnet.py
     print('[+] Building CNN')
     self.network = input_data(shape = [None, SIZE_FACE, SIZE_FACE, 1])
-    self.network = conv_2d(self.network, 32, 4, activation = 'relu')
-    self.network = max_pool_2d(self.network, 2)
-    self.network = conv_2d(self.network, 64, 3, activation = 'relu')
-    self.network = conv_2d(self.network, 64, 3, activation = 'relu')
-    self.network = max_pool_2d(self.network, 2)
-    self.network = fully_connected(self.network, 512, activation = 'relu')
+    self.network = conv_2d(self.network, 96, 11, strides = 4, activation = 'relu')
+    self.network = max_pool_2d(self.network, 3, strides = 2)
+    self.network = local_response_normalization(self.network)
+    self.network = conv_2d(self.network, 256, 5, activation = 'relu')
+    self.network = max_pool_2d(self.network, 3, strides = 2)
+    self.network = local_response_normalization(self.network)
+    self.network = conv_2d(self.network, 384, 3, activation = 'relu')
+    self.network = conv_2d(self.network, 384, 3, activation = 'relu')
+    self.network = conv_2d(self.network, 256, 3, activation = 'relu')
+    self.network = max_pool_2d(self.network, 3, strides = 2)
+    self.network = local_response_normalization(self.network)
+    self.network = fully_connected(self.network, 4096, activation = 'tanh')
+    self.network = dropout(self.network, 0.5)
+    self.network = fully_connected(self.network, 4096, activation = 'tanh')
     self.network = dropout(self.network, 0.5)
     self.network = fully_connected(self.network, len(EMOTIONS), activation = 'softmax')
-    mom = tflearn.Momentum(0.1, lr_decay = 0.1, decay_step = 16000, staircase = True)
+    #mom = tflearn.Momentum(0.1, lr_decay = 0.1, decay_step = 16000, staircase = True)
     self.network = regression(self.network,
-      optimizer = mom,
+      optimizer = 'momentum',
       loss = 'categorical_crossentropy',
       learning_rate = 0.001)
     self.model = tflearn.DNN(
@@ -59,7 +67,7 @@ class MoodRecognition:
     self.model.fit(
       self.dataset.images, self.dataset.labels,
       validation_set = (self.dataset.images_test, self.dataset.labels_test),
-      n_epoch = 10,
+      n_epoch = 30,
       batch_size = 100,
       shuffle = True,
       show_metric = True,
@@ -87,7 +95,7 @@ class MoodRecognition:
 def show_usage():
   # I din't want to have more dependecies
   print('[!] Usage: python mood_recognition.py')
-  print('\t mood_recognition.py train-model \t Trains and saves model with saved dataset')
+  print('\t mood_recognition.py train \t Trains and saves model with saved dataset')
   print('\t mood_recognition.py poc \t Launch the proof of concept')
 
 if __name__ == "__main__":
@@ -96,7 +104,7 @@ if __name__ == "__main__":
     exit()
 
   network = MoodRecognition()
-  if sys.argv[1] == 'train-model':
+  if sys.argv[1] == 'train':
     network.start_training()
     network.save_model()
   elif sys.argv[1] == 'poc':

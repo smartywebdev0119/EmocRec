@@ -1,4 +1,4 @@
-from __future__ import division, print_function, absolute_import
+from __future__ import division, absolute_import
 import re
 import numpy as np
 from dataset_loader import DatasetLoader, ImageFile
@@ -46,14 +46,8 @@ class MoodRecognition:
     self.dataset.save()
 
   def load_saved_dataset(self):
-    try:
-      # IF file exists
-      self.dataset.load_from_save()
-      print('[+] Dataset found and loaded')
-    except Exception as err:
-      # If not, we build them
-      print('[+] Dataset was not found, building')
-      self.build_and_save_dataset()
+    self.dataset.load_from_save()
+    print('[+] Dataset found and loaded')
 
   def start_training(self):
     self.load_saved_dataset()
@@ -64,7 +58,7 @@ class MoodRecognition:
     print('[+] Training network')
     self.model.fit(
       self.dataset.images, self.dataset.labels,
-      validation_set = 0.1,
+      validation_set = (self.dataset.images_test, self.dataset.labels_test),
       n_epoch = 10,
       batch_size = 100,
       shuffle = True,
@@ -91,8 +85,8 @@ class MoodRecognition:
 
 
 def show_usage():
+  # I din't want to have more dependecies
   print('[!] Usage: python mood_recognition.py')
-  print('\t mood_recognition.py build-dataset \t Build and saved dataset with labels')
   print('\t mood_recognition.py train-model \t Trains and saves model with saved dataset')
   print('\t mood_recognition.py poc \t Launch the proof of concept')
 
@@ -102,9 +96,7 @@ if __name__ == "__main__":
     exit()
 
   network = MoodRecognition()
-  if sys.argv[1] == 'build-dataset':
-    network.build_and_save_dataset()
-  elif sys.argv[1] == 'train-model':
+  if sys.argv[1] == 'train-model':
     network.start_training()
     network.save_model()
   elif sys.argv[1] == 'poc':

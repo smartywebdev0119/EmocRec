@@ -10,6 +10,9 @@ model_alexnet-1200
 saves/
 
 man/
+fer2013 preprocessed data/
+cv.py
+cv2.so
 
 ### OSX ###
 .DS_Store

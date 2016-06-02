@@ -19,6 +19,10 @@ except Exception as err:
 video_capture = cv2.VideoCapture(0)
 font = cv2.FONT_HERSHEY_SIMPLEX
 
+feelings_faces = []
+for index, emotion in enumerate(EMOTIONS):
+    feelings_faces.append(cv2.imread('./emojis/' + emotion + '.png', 1))
+
 while True:
     # Capture frame-by-frame
     ret, frame = video_capture.read()
@@ -33,6 +37,9 @@ while True:
       for index, emotion in enumerate(EMOTIONS):
         cv2.putText(frame, emotion, (10, index * 20 + 20), cv2.FONT_HERSHEY_PLAIN, 0.5, (0,255,0), 1);
         cv2.rectangle(frame, (130, index * 20 + 10), (130 + int(result[0][index] * 100), (index + 1) * 20 + 4), (255, 0, 0), -1)
+
+    emotion_index = result[0].index(max(result[0]))
+    frame[200:320, 10:130, :] = feelings_faces[emotion_index]
 
     # Display the resulting frame
     cv2.imshow('Video', frame)

@@ -67,7 +67,7 @@ class MoodRecognition:
     self.model.fit(
       self.dataset.images, self.dataset.labels,
       validation_set = (self.dataset.images_test, self.dataset.labels_test),
-      n_epoch = 30,
+      n_epoch = 60,
       batch_size = 100,
       shuffle = True,
       show_metric = True,

@@ -1,7 +1,7 @@
 from __future__ import division, absolute_import
 import re
 import numpy as np
-from dataset_loader import DatasetLoader, ImageFile
+from dataset_loader import DatasetLoader
 import tflearn
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.conv import conv_2d, max_pool_2d
@@ -40,18 +40,14 @@ class MoodRecognition:
     #mom = tflearn.Momentum(0.1, lr_decay = 0.1, decay_step = 16000, staircase = True)
     self.network = regression(self.network,
       optimizer = 'momentum',
-      loss = 'categorical_crossentropy',
-      learning_rate = 0.001)
+      loss = 'categorical_crossentropy')
     self.model = tflearn.DNN(
       self.network,
       checkpoint_path = SAVE_DIRECTORY + '/alexnet_mood_recognition',
       max_checkpoints = 1,
       tensorboard_verbose = 2
     )
-
-  def build_and_save_dataset(self):
-    self.dataset.build()
-    self.dataset.save()
+    self.load_model()
 
   def load_saved_dataset(self):
     self.dataset.load_from_save()
@@ -67,8 +63,8 @@ class MoodRecognition:
     self.model.fit(
       self.dataset.images, self.dataset.labels,
       validation_set = (self.dataset.images_test, self.dataset.labels_test),
-      n_epoch = 60,
-      batch_size = 100,
+      n_epoch = 50,
+      batch_size = 50,
       shuffle = True,
       show_metric = True,
       snapshot_step = 200,
@@ -88,8 +84,9 @@ class MoodRecognition:
     print('[+] Model trained and saved at ' + SAVE_MODEL_FILENAME)
 
   def load_model(self):
-    self.model.load(join(SAVE_DIRECTORY, SAVE_MODEL_FILENAME))
-    print('[+] Model loaded from ' + SAVE_MODEL_FILENAME)
+    if isfile(join(SAVE_DIRECTORY, SAVE_MODEL_FILENAME)):
+      self.model.load(join(SAVE_DIRECTORY, SAVE_MODEL_FILENAME))
+      print('[+] Model loaded from ' + SAVE_MODEL_FILENAME)
 
 
 def show_usage():

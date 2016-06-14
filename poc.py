@@ -5,16 +5,11 @@ import sys
 from constants import *
 from mood_recognition import MoodRecognition
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Load Model
 network = MoodRecognition()
 network.build_network()
-try:
-    network.load_model()
-except Exception as err:
-    print('[!] Saved model not found, exit(): ')
-    print(err)
-    exit()
 
 video_capture = cv2.VideoCapture(0)
 font = cv2.FONT_HERSHEY_SIMPLEX

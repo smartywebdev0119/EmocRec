@@ -73,7 +73,7 @@ class MoodRecognition:
     )
 
   def predict(self, image):
-    image = ImageFile.format_image(image)
+    #image = ImageFile.format_image(image)
     if image is None:
       return None
     image = image.reshape([-1, SIZE_FACE, SIZE_FACE, 1])

@@ -47,7 +47,7 @@ class MoodRecognition:
       max_checkpoints = 1,
       tensorboard_verbose = 2
     )
-    #self.load_model()
+    self.load_model()
 
   def load_saved_dataset(self):
     self.dataset.load_from_save()

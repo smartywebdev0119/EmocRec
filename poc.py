@@ -3,6 +3,7 @@ import tflearn
 import cv2
 import sys
 from constants import *
+from dataset_loader import ImageFile
 from mood_recognition import MoodRecognition
 import numpy as np
 import matplotlib.pyplot as plt
@@ -23,7 +24,7 @@ while True:
     ret, frame = video_capture.read()
 
     # Predict result with network
-    result = network.predict(frame)
+    result = network.predict(ImageFile.format_image(frame))
 
     # Draw face in frame
 

@@ -3,8 +3,9 @@ import re
 import numpy as np
 from dataset_loader import DatasetLoader
 import tflearn
-from tflearn.layers.core import input_data, dropout, fully_connected
-from tflearn.layers.conv import conv_2d, max_pool_2d
+from tflearn.layers.core import input_data, dropout, fully_connected, flatten
+from tflearn.layers.conv import conv_2d, max_pool_2d, avg_pool_2d
+from tflearn.layers.merge_ops import merge
 from tflearn.layers.normalization import local_response_normalization
 from tflearn.layers.estimator import regression
 from constants import *
@@ -19,6 +20,8 @@ class MoodRecognition:
   def build_network(self):
     # Building 'AlexNet'
     # https://github.com/tflearn/tflearn/blob/master/examples/images/alexnet.py
+    # https://github.com/DT42/squeezenet_demo
+    # https://github.com/yhenon/pysqueezenet/blob/master/squeezenet.py
     print('[+] Building CNN')
     self.network = input_data(shape = [None, SIZE_FACE, SIZE_FACE, 1])
     self.network = conv_2d(self.network, 96, 11, strides = 4, activation = 'relu')
@@ -27,17 +30,14 @@ class MoodRecognition:
     self.network = conv_2d(self.network, 256, 5, activation = 'relu')
     self.network = max_pool_2d(self.network, 3, strides = 2)
     self.network = local_response_normalization(self.network)
-    self.network = conv_2d(self.network, 384, 3, activation = 'relu')
-    self.network = conv_2d(self.network, 384, 3, activation = 'relu')
     self.network = conv_2d(self.network, 256, 3, activation = 'relu')
     self.network = max_pool_2d(self.network, 3, strides = 2)
     self.network = local_response_normalization(self.network)
-    self.network = fully_connected(self.network, 4096, activation = 'tanh')
+    self.network = fully_connected(self.network, 1024, activation = 'tanh')
     self.network = dropout(self.network, 0.5)
-    self.network = fully_connected(self.network, 4096, activation = 'tanh')
+    self.network = fully_connected(self.network, 1024, activation = 'tanh')
     self.network = dropout(self.network, 0.5)
     self.network = fully_connected(self.network, len(EMOTIONS), activation = 'softmax')
-    #mom = tflearn.Momentum(0.1, lr_decay = 0.1, decay_step = 16000, staircase = True)
     self.network = regression(self.network,
       optimizer = 'momentum',
       loss = 'categorical_crossentropy')
@@ -47,7 +47,7 @@ class MoodRecognition:
       max_checkpoints = 1,
       tensorboard_verbose = 2
     )
-    self.load_model()
+    #self.load_model()
 
   def load_saved_dataset(self):
     self.dataset.load_from_save()
@@ -73,7 +73,6 @@ class MoodRecognition:
     )
 
   def predict(self, image):
-    #image = ImageFile.format_image(image)
     if image is None:
       return None
     image = image.reshape([-1, SIZE_FACE, SIZE_FACE, 1])

@@ -10,6 +10,7 @@ from tflearn.layers.normalization import local_response_normalization
 from tflearn.layers.estimator import regression
 from constants import *
 from os.path import isfile, join
+import random
 import sys
 
 class MoodRecognition:
@@ -63,7 +64,7 @@ class MoodRecognition:
     self.model.fit(
       self.dataset.images, self.dataset.labels,
       validation_set = (self.dataset.images_test, self.dataset.labels_test),
-      n_epoch = 50,
+      n_epoch = 100,
       batch_size = 50,
       shuffle = True,
       show_metric = True,

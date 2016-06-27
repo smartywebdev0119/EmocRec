@@ -8,14 +8,12 @@
 #
 #
 
-CACHE_DATASET_PATH = './dataset/cache/'
-DATASET_PATH = './dataset/'
 CASC_PATH = './haarcascade_files/haarcascade_frontalface_default.xml'
 SIZE_FACE = 48
 EMOTIONS = ['angry', 'disgusted', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
 SAVE_DIRECTORY = './fer2013 preprocessed data/'
-SAVE_MODEL_FILENAME = 'model.tfl'
-SAVE_DATASET_IMAGES_FILENAME = 'data_set_fer2013.npy'
-SAVE_DATASET_LABELS_FILENAME = 'data_labels_fer2013.npy'
-SAVE_DATASET_IMAGES_TEST_FILENAME = 'preprocessed data final - with disgusted/test_set_rafd.npy'
-SAVE_DATASET_LABELS_TEST_FILENAME = 'preprocessed data final - with disgusted/test_labels_rafd.npy'
+SAVE_MODEL_FILENAME = 'model_smaller_alexnet.tfl'
+SAVE_DATASET_IMAGES_FILENAME = 'data_kike.npy'
+SAVE_DATASET_LABELS_FILENAME = 'labels_kike.npy'
+#SAVE_DATASET_IMAGES_TEST_FILENAME = 'test_set_rafd.npy'
+#SAVE_DATASET_LABELS_TEST_FILENAME = 'test_labels_rafd.npy'

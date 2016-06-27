@@ -19,10 +19,8 @@ class MoodRecognition:
     self.dataset = DatasetLoader()
 
   def build_network(self):
-    # Building 'AlexNet'
+    # Smaller 'AlexNet'
     # https://github.com/tflearn/tflearn/blob/master/examples/images/alexnet.py
-    # https://github.com/DT42/squeezenet_demo
-    # https://github.com/yhenon/pysqueezenet/blob/master/squeezenet.py
     print('[+] Building CNN')
     self.network = input_data(shape = [None, SIZE_FACE, SIZE_FACE, 1])
     self.network = conv_2d(self.network, 96, 11, strides = 4, activation = 'relu')
@@ -63,7 +61,7 @@ class MoodRecognition:
     print('[+] Training network')
     self.model.fit(
       self.dataset.images, self.dataset.labels,
-      validation_set = (self.dataset.images_test, self.dataset.labels_test),
+      validation_set = 0.1,
       n_epoch = 100,
       batch_size = 50,
       shuffle = True,
@@ -80,7 +78,7 @@ class MoodRecognition:
     return self.model.predict(image)
 
   def save_model(self):
-    self.model.save(join(SAVE_DIRECTORY, SAVE_MODEL_FILENAME))
+    self.model.save(join(SAVE_DIRECTORY, SAVE_MODEL_FILENAME + '.np2'))
     print('[+] Model trained and saved at ' + SAVE_MODEL_FILENAME)
 
   def load_model(self):

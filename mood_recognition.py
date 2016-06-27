@@ -23,26 +23,24 @@ class MoodRecognition:
     # https://github.com/tflearn/tflearn/blob/master/examples/images/alexnet.py
     print('[+] Building CNN')
     self.network = input_data(shape = [None, SIZE_FACE, SIZE_FACE, 1])
-    self.network = conv_2d(self.network, 96, 11, strides = 4, activation = 'relu')
+    self.network = conv_2d(self.network, 64, 5, activation = 'relu')
     self.network = max_pool_2d(self.network, 3, strides = 2)
     self.network = local_response_normalization(self.network)
-    self.network = conv_2d(self.network, 256, 5, activation = 'relu')
+    self.network = conv_2d(self.network, 64, 5, activation = 'relu')
     self.network = max_pool_2d(self.network, 3, strides = 2)
     self.network = local_response_normalization(self.network)
-    self.network = conv_2d(self.network, 256, 3, activation = 'relu')
+    self.network = conv_2d(self.network, 128, 4, activation = 'relu')
     self.network = max_pool_2d(self.network, 3, strides = 2)
     self.network = local_response_normalization(self.network)
-    self.network = fully_connected(self.network, 1024, activation = 'tanh')
-    self.network = dropout(self.network, 0.5)
-    self.network = fully_connected(self.network, 1024, activation = 'tanh')
-    self.network = dropout(self.network, 0.5)
+    self.network = fully_connected(self.network, 3072, activation = 'relu')
+    self.network = dropout(self.network, 0.2)
     self.network = fully_connected(self.network, len(EMOTIONS), activation = 'softmax')
     self.network = regression(self.network,
       optimizer = 'momentum',
       loss = 'categorical_crossentropy')
     self.model = tflearn.DNN(
       self.network,
-      checkpoint_path = SAVE_DIRECTORY + '/alexnet_mood_recognition',
+      checkpoint_path = SAVE_DIRECTORY + '/emotion_recognition',
       max_checkpoints = 1,
       tensorboard_verbose = 2
     )
@@ -61,14 +59,14 @@ class MoodRecognition:
     print('[+] Training network')
     self.model.fit(
       self.dataset.images, self.dataset.labels,
-      validation_set = 0.1,
+      validation_set = (self.dataset.images_test, self.dataset._labels_test)
       n_epoch = 100,
       batch_size = 50,
       shuffle = True,
       show_metric = True,
       snapshot_step = 200,
       snapshot_epoch = True,
-      run_id = 'alexnet_mood_recognition'
+      run_id = 'emotion_recognition'
     )
 
   def predict(self, image):
@@ -78,7 +76,7 @@ class MoodRecognition:
     return self.model.predict(image)
 
   def save_model(self):
-    self.model.save(join(SAVE_DIRECTORY, SAVE_MODEL_FILENAME + '.np2'))
+    self.model.save(join(SAVE_DIRECTORY, SAVE_MODEL_FILENAME))
     print('[+] Model trained and saved at ' + SAVE_MODEL_FILENAME)
 
   def load_model(self):

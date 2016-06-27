@@ -8,6 +8,7 @@ model_alexnet-1200
 *.meta
 *.tfl
 saves/
+*.npy
 
 man/
 fer2013 preprocessed data/

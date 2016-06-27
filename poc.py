@@ -60,6 +60,8 @@ while True:
   result = network.predict(format_image(frame))
 
   # Draw face in frame
+  # for (x,y,w,h) in faces:
+  #   cv2.rectangle(frame, (x,y), (x+w,y+h), (255,0,0), 2)
 
   # Write results in frame
   if result is not None:

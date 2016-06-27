@@ -1,4 +1,4 @@
-# Mood recognition with CNN
+# Emotion recognition with CNN
 
 
 This repository is the out project about mood recognition using convolutional neural network for the course Seminar Neural Networks at TU Delft.
@@ -14,9 +14,9 @@ This repository is the out project about mood recognition using convolutional ne
 
 ## Dataset
 
-We use the [Radboud Faces Database](http://www.socsci.ru.nl:8180/RaFD2/RaFD?p=main), a set of pictures of 67 models displaying 8 emotional expressions (Anger, disgust, fear, happiness, sadness, surprise, contempt, and neutral).
+We use the [FER-2013 Faces Database](http://www.socsci.ru.nl:8180/RaFD2/RaFD?p=main), a set of 28,709 pictures of people displaying 7 emotional expressions (angry, disgusted, fearful, happy, sad, surprised and neutral).
 
-You have to request for access to the dataset.
+You have to request for access to the dataset or you can get it on [Kraggle](https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/data).
 
 ## Paper
 

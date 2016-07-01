@@ -18,6 +18,12 @@ We use the [FER-2013 Faces Database](http://www.socsci.ru.nl:8180/RaFD2/RaFD?p=m
 
 You have to request for access to the dataset or you can get it on [Kraggle](https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/data).
 
+## Usage
+
+```bash
+$ python emotion_recognition.py poc
+```
+
 ## Paper
 
-Work in progress..
+[Link](https://github.com/isseu/emotion-recognition-neural-networks/paper/Report_NN.pdf)

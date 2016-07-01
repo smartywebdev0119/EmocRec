@@ -3,7 +3,7 @@ import cv2
 import sys
 import os
 from constants import *
-from mood_recognition import MoodRecognition
+from emotion_recognition import EmotionRecognition
 import numpy as np
 
 def format_image(image):
@@ -41,7 +41,7 @@ def format_image(image):
   # cv2.waitKey(0)
   return image
 # Load Model
-network = MoodRecognition()
+network = EmotionRecognition()
 network.build_network()
 
 files = []

@@ -2,13 +2,13 @@
 import cv2
 import sys
 from constants import *
-from mood_recognition import MoodRecognition
+from emotion_recognition import EmotionRecognition
 from os.path import join
 import numpy as np
 import matplotlib.pyplot as plt
 
 # Load Model
-network = MoodRecognition()
+network = EmotionRecognition()
 network.build_network()
 
 images = np.load(join(SAVE_DIRECTORY, SAVE_DATASET_IMAGES_FILENAME))

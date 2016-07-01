@@ -2,7 +2,7 @@
 import cv2
 import sys
 from constants import *
-from mood_recognition import MoodRecognition
+from emotion_recognition import EmotionRecognition
 import numpy as np
 
 cascade_classifier = cv2.CascadeClassifier(CASC_PATH)
@@ -42,7 +42,7 @@ def format_image(image):
   return image
 
 # Load Model
-network = MoodRecognition()
+network = EmotionRecognition()
 network.build_network()
 
 video_capture = cv2.VideoCapture(0)

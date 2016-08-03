@@ -5,6 +5,8 @@ This repository is the out project about mood recognition using convolutional ne
 
 **POC-GIF-HERE**
 
+ 67% Accuracy
+
 ## Dependencies
 
 - [NumPy](http://docs.scipy.org/doc/numpy-1.10.1/user/install.html)

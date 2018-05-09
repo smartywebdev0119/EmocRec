@@ -11,7 +11,7 @@ This repository is the out project about mood recognition using convolutional ne
 
 ## Dataset
 
-We use the [FER-2013 Faces Database](http://www.socsci.ru.nl:8180/RaFD2/RaFD?p=main), a set of 28,709 pictures of people displaying 7 emotional expressions (angry, disgusted, fearful, happy, sad, surprised and neutral).
+We use the [FER-2013 Faces Database](http://www.socsci.ru.nl:8180/RaFD2/RaFD?p=main), a set of 28,709 pictures of people displaying 7 emotional expressions (angry, disgusted, fearful, happy, sad, surprised and neutral). **The dataset quality and image diversity is not very good and you will probably get a model with bad accuracy in other applications!**
 
 You have to request for access to the dataset or you can get it on [Kraggle](https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/data). Download `fer2013.tar.gz` and decompress `fer2013.csv` in the `./data` folder.
 

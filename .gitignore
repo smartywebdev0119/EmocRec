@@ -1,4 +1,5 @@
 # Created by https://www.gitignore.io/api/osx
+.vscode/
 
 helen-datasets/
 RafDDownload-70101E8ED8296C00B8A47F0145DCC40A/
@@ -90,5 +91,9 @@ $RECYCLE.BIN/
 
 # Linux trash folder which might appear on any partition or disk
 .Trash-*
+
+data/fer2013.bib
+data/fer2013.csv
+data/README
 
 

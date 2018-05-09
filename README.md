@@ -9,23 +9,35 @@ This repository is the out project about mood recognition using convolutional ne
 
  ![Angry Test](https://raw.githubusercontent.com/isseu/emotion-recognition-neural-networks/master/paper/matrix_final.png)
 
-## Dependencies
-
-- [NumPy](http://docs.scipy.org/doc/numpy-1.10.1/user/install.html)
-- [Tensorflow](https://www.tensorflow.org/versions/r0.8/get_started/os_setup.html)
-- [TFLearn](https://github.com/tflearn/tflearn#installation)
-- [OpenCV](https://opencv-python-tutroals.readthedocs.io/en/latest/)
-
 ## Dataset
 
 We use the [FER-2013 Faces Database](http://www.socsci.ru.nl:8180/RaFD2/RaFD?p=main), a set of 28,709 pictures of people displaying 7 emotional expressions (angry, disgusted, fearful, happy, sad, surprised and neutral).
 
-You have to request for access to the dataset or you can get it on [Kraggle](https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/data).
+You have to request for access to the dataset or you can get it on [Kraggle](https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/data). Download `fer2013.tar.gz` and decompress `fer2013.csv` in the `./data` folder.
+
+Install all the dependencies using `virtualenv`.
+
+```bash
+virtualenv -p python3 ./
+source ./bin/activate
+pip install -r requirements.txt
+```
+
+The data is in CSV and we need to transform it using the script `csv_to_numpy.py` that generates the image and label data in the `data` folder.
+
+```bash
+$ python3 csv_to_numpy.py
+```
+
+By default this is using AlexNet architectures, but in the paper we propose different ones.
 
 ## Usage
 
 ```bash
-$ python emotion_recognition.py poc
+# To train a model
+$ python3 emotion_recognition.py train
+# To use it live
+$ python3 emotion_recognition.py poc
 ```
 
 ## Paper
